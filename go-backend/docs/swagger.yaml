@@ -1,0 +1,23 @@
+definitions:
+  controllers.CodeResponse:
+    properties:
+      code:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      description: Get Main
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CodeResponse'
+      summary: Get Main
+      tags:
+      - main
+swagger: "2.0"
