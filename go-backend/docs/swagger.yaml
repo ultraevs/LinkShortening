@@ -4,6 +4,11 @@ definitions:
       code:
         type: integer
     type: object
+  controllers.Response:
+    properties:
+      message:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -20,4 +25,42 @@ paths:
       summary: Get Main
       tags:
       - main
+  /short/{key}:
+    get:
+      description: Redirecting from short link to full
+      parameters:
+      - description: short link key
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.Response'
+      summary: Short Link Redirect
+      tags:
+      - Shorter
+  /shorter:
+    post:
+      description: Getting full link and make it short
+      parameters:
+      - description: full link
+        in: formData
+        name: full_link
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.Response'
+      summary: Do Link Short
+      tags:
+      - Shorter
 swagger: "2.0"

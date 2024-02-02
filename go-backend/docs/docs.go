@@ -34,6 +34,64 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/short/{key}": {
+            "get": {
+                "description": "Redirecting from short link to full",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shorter"
+                ],
+                "summary": "Short Link Redirect",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "short link key",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/shorter": {
+            "post": {
+                "description": "Getting full link and make it short",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Shorter"
+                ],
+                "summary": "Do Link Short",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "full link",
+                        "name": "full_link",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -42,6 +100,14 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "integer"
+                }
+            }
+        },
+        "controllers.Response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         }

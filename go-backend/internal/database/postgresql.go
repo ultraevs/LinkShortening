@@ -34,7 +34,7 @@ func ConnectDatabase() {
 		fmt.Println("Successfully connected to database!")
 	}
 	createTableSQL := `
-	CREATE TABLE IF NOT EXISTS sessions (
+	CREATE TABLE IF NOT EXISTS short_link (
 		id SERIAL PRIMARY KEY,
 		link TEXT,
 		short TEXT,
