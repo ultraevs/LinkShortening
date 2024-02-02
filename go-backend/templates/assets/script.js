@@ -1,3 +1,23 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const historyListContainer = document.getElementById('historyList');
+    fetch('/get')
+        .then(response => response.json())
+        .then(data => {
+            if (data.response && Object.keys(data.response).length > 0) {
+                Object.entries(data.response).forEach(([fullLink, shortLink]) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${fullLink} => ${shortLink}`;
+                    historyListContainer.appendChild(listItem);
+                });
+            } else {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'История сокращений пуста.';
+                historyListContainer.appendChild(listItem);
+            }
+        })
+        .catch(error => console.error('Ошибка при запросе данных:', error));
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('urlForm');
     form.addEventListener('submit', function (event) {

@@ -3,11 +3,14 @@ package controllers
 import (
 	"app/internal/database"
 	"app/internal/models"
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Response struct {
@@ -49,8 +52,15 @@ func DoShorter(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"response": response})
 		return
 	}
+	// Извлекаем значение куки
+	cookie, err := context.Request.Cookie("session")
+	if err != nil {
+		response := Response{Message: "error getting user cookie"}
+		context.JSON(http.StatusBadRequest, gin.H{"response": response})
+		return
+	}
 	shorted := MakeShort()
-	err := SaveLinkToDatebase(request.Link, shorted)
+	err = SaveLinkToDatabase(strings.TrimPrefix(request.Link, "https://"), shorted, cookie)
 	if err != nil {
 		response := Response{Message: err.Error()}
 		context.JSON(http.StatusInternalServerError, gin.H{"response": response})
@@ -66,13 +76,33 @@ func DoShorter(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"response": response})
 }
 
-func SaveLinkToDatebase(fullLink string, shortLink string) error {
+func SaveLinkToDatabase(fullLink, shortLink string, cookie *http.Cookie) error {
 	insertSQL := "INSERT INTO short_link (link, short) VALUES ($1, $2);"
 	_, err := database.Db.Exec(insertSQL, fullLink, shortLink)
 	if err != nil {
 		fmt.Println("Error inserting into short_link:", err)
 		return err
 	}
+
+	historyUpdateSQL := `
+        INSERT INTO shorting_history (cookie, history)
+        VALUES ($1, $2::jsonb)
+        ON CONFLICT (cookie) DO UPDATE
+        SET history = shorting_history.history || $2::jsonb;
+    `
+
+	jsonData, err := json.Marshal(map[string]string{fullLink: shortLink})
+	if err != nil {
+		fmt.Println("Error marshaling history data:", err)
+		return err
+	}
+
+	_, err = database.Db.Exec(historyUpdateSQL, cookie.Value, jsonData)
+	if err != nil {
+		fmt.Println("Error updating shorting_history:", err)
+		return err
+	}
+
 	return err
 }
 
@@ -85,6 +115,25 @@ func CheckShortLink(shortLink string) (string, error) {
 	}
 	return fullLink, nil
 
+}
+
+func GetHistoryFromDB(cookie *http.Cookie) (map[string]string, error) {
+	historyJSON := ""
+	row := database.Db.QueryRow("SELECT history FROM shorting_history WHERE cookie = $1;", cookie.Value)
+	err := row.Scan(&historyJSON)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return make(map[string]string), nil
+		}
+		return nil, err
+	}
+
+	var historyMap map[string]string
+	if err := json.Unmarshal([]byte(historyJSON), &historyMap); err != nil {
+		return nil, err
+	}
+
+	return historyMap, nil
 }
 
 func MakeShort() string {

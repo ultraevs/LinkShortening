@@ -33,16 +33,24 @@ func ConnectDatabase() {
 		Db = db
 		fmt.Println("Successfully connected to database!")
 	}
-	createTableSQL := `
-	CREATE TABLE IF NOT EXISTS short_link (
-		id SERIAL PRIMARY KEY,
-		link TEXT,
-		short TEXT,
-		created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-	);`
-	_, err = Db.Exec(createTableSQL)
+	createTablesSQL := `
+CREATE TABLE IF NOT EXISTS short_link (
+    id SERIAL PRIMARY KEY,
+    link TEXT,
+    short TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS shorting_history (
+    id SERIAL PRIMARY KEY,
+    cookie TEXT UNIQUE,
+    history JSONB
+);
+`
+
+	_, err = Db.Exec(createTablesSQL)
 	if err != nil {
-		fmt.Println("Произошла ошибка при создании таблицы sessions:", err)
+		fmt.Println("Произошла ошибка при создании таблиц:", err)
 		panic(err)
 	}
 }

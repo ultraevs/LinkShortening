@@ -10,13 +10,11 @@ services:
       - DOCKER_MODE=1
     ports:
       - "8082:8082"
-    env_file:
-      - .env
 
-  postgres:
-    image: postgres:latest
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "5433:5433"
+#  postgres:
+#    image: postgres:latest
+#    restart: always
+#    env_file:
+#      - ../go-backend/.env
+#    ports:
+#      - "5434:5434"
