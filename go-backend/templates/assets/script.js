@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const historyListContainer = document.getElementById('historyList');
     fetch('/get')
         .then(response => response.json())
@@ -16,15 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => console.error('Ошибка при запросе данных:', error));
-});
 
-document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('urlForm');
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         var originalUrl = document.getElementById('originalUrl').value;
-
-        var linkElement = document.createElement('a');
 
         fetch('/shorter', {
             method: 'POST',
@@ -42,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 shortenedUrlContainer.innerHTML = '';
                 shortenedUrlContainer.textContent = shortenedUrl;
                 shortenedUrlContainer.setAttribute('contentEditable', 'true');
-                document.querySelector(".result-container").style.display = "block";
-                addToHistory(shortenedUrl);
+                document.querySelector(".result-container").style.display = "flex";
+                document.getElementById('shortenedUrlContainer').style.display = 'block';
             })
             .catch(function (error) {
                 console.error('Ошибка при отправке запроса:', error);
@@ -53,9 +49,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function addToHistory(url) {
     var historyContainer = document.querySelector(".history");
-    var historyItem = document.createElement("div");
-    historyItem.textContent = "Сокращенная ссылка: " + url;
-    historyContainer.appendChild(historyItem);
+    var listItem = document.createElement("div");
+    listItem.textContent = url;
+    historyContainer.appendChild(listItem);
 }
 
 function copyShortenedUrl() {
@@ -69,7 +65,8 @@ function copyShortenedUrl() {
     selection.removeAllRanges();
     alert("Скопирована сокращенная ссылка: " + shortenedUrlField.textContent);
 }
+
 document.getElementById('urlForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    document.getElementById('shortenedUrlContainer').style.display = 'block';
+    document.getElementById('shortenedUrlContainer').style.display = 'flex';
 });
