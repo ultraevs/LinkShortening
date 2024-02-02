@@ -7,17 +7,32 @@
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
+<div class="header">
+    <h1>ultraevs.ru</h1>
+</div>
 <div class="container">
     <h2>Сокращение ссылок</h2>
     <form id="urlForm">
         <label for="originalUrl">Введите вашу ссылку:</label>
         <br>
-        <input type="text" id="originalUrl" name="originalUrl" placeholder="https://www.example.com" required>
+        <input type="text" id="originalUrl" name="originalUrl" placeholder="example.com" required>
         <br>
         <input type="submit" value="Сократить">
     </form>
-    <br>
-    <div id="shortenedUrl"></div>
+    <div class="result-container">
+        <div id="shortenedUrlContainer" class="url-container" style="display: none;">
+            <div id="shortenedUrl" class="url-field"></div>
+            <button id="copyButton" onclick="copyShortenedUrl()">Копировать</button>
+        </div>
+        <div class="social-icons">
+            <!-- Логотипы соцсетей здесь -->
+        </div>
+    </div>
+
+    <div class="history">
+        <h3>История сокращений</h3>
+        <!-- Здесь будет отображаться история -->
+    </div>
 </div>
 
 <script src="assets/script.js"></script>

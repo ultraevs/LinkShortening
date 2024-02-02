@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
+	"os"
 )
 
 type Response struct {
@@ -55,7 +56,13 @@ func DoShorter(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"response": response})
 		return
 	}
-	response := Response{Message: shorted}
+	var resp string
+	if os.Getenv("SETUP_TYPE") == "local" {
+		resp = "http://localhost:8082/short/" + string(shorted)
+	} else {
+		resp = "https://shorter.ultraevs.ru/short/" + string(shorted)
+	}
+	response := Response{Message: resp}
 	context.JSON(http.StatusOK, gin.H{"response": response})
 }
 
@@ -81,7 +88,7 @@ func CheckShortLink(shortLink string) (string, error) {
 }
 
 func MakeShort() string {
-	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
 	b := make([]byte, 5)
 	for i := range b {
