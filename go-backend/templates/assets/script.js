@@ -5,8 +5,35 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             if (data.response && Object.keys(data.response).length > 0) {
                 Object.entries(data.response).forEach(([fullLink, shortLink]) => {
+                    const truncatedFullLink = truncateLink(fullLink, 33);
+                    const truncatedShortLink = truncateLink(shortLink, 33);
+
                     const listItem = document.createElement('li');
-                    listItem.textContent = `${fullLink} => ${shortLink}`;
+
+                    const fullLinkAnchor = document.createElement('a');
+                    fullLinkAnchor.href = fullLink;
+                    fullLinkAnchor.textContent = truncatedFullLink;
+                    fullLinkAnchor.classList.add('history-link');
+
+                    const shortLinkAnchor = document.createElement('a');
+                    shortLinkAnchor.href = shortLink;
+                    shortLinkAnchor.textContent = truncatedShortLink;
+                    shortLinkAnchor.classList.add('history-link');
+
+                    listItem.classList.add('history-item');
+                    listItem.appendChild(document.createTextNode(''));
+                    listItem.appendChild(fullLinkAnchor);
+                    listItem.appendChild(shortLinkAnchor);
+
+                    const copyButton = document.createElement('button');
+                    copyButton.textContent = 'Копировать';
+                    copyButton.onclick = function() {
+                        copyTextToClipboard(shortLink);
+                    };
+                    copyButton.id = "copyButton"
+
+                    listItem.appendChild(copyButton);
+
                     historyListContainer.appendChild(listItem);
                 });
             } else {
@@ -39,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 shortenedUrlContainer.textContent = shortenedUrl;
                 shortenedUrlContainer.setAttribute('contentEditable', 'true');
                 document.querySelector(".result-container").style.display = "flex";
-                document.getElementById('shortenedUrlContainer').style.display = 'block';
             })
             .catch(function (error) {
                 console.error('Ошибка при отправке запроса:', error);
@@ -63,7 +89,18 @@ function copyShortenedUrl() {
     selection.addRange(range);
     document.execCommand("copy");
     selection.removeAllRanges();
-    alert("Скопирована сокращенная ссылка: " + shortenedUrlField.textContent);
+}
+function copyTextToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+}
+
+function truncateLink(link, length) {
+    return link.length > length ? link.substring(0, length) + '...' : link;
 }
 
 document.getElementById('urlForm').addEventListener('submit', function (event) {

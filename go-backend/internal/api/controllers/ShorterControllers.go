@@ -90,8 +90,13 @@ func SaveLinkToDatabase(fullLink, shortLink string, cookie *http.Cookie) error {
         ON CONFLICT (cookie) DO UPDATE
         SET history = shorting_history.history || $2::jsonb;
     `
-
-	jsonData, err := json.Marshal(map[string]string{fullLink: shortLink})
+	var preShort string
+	if os.Getenv("SETUP_TYPE") == "local" {
+		preShort = "http://localhost:8082/short/"
+	} else {
+		preShort = "https://shorter.ultraevs.ru/short/"
+	}
+	jsonData, err := json.Marshal(map[string]string{"https://" + fullLink: preShort + shortLink})
 	if err != nil {
 		fmt.Println("Error marshaling history data:", err)
 		return err

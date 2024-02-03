@@ -22,10 +22,11 @@ body {
     text-align: center;
 }
 
-.header h1 {
+.header a {
     margin: 0;
     color: #f0f0f0;
     font-size: 24px;
+    text-decoration: none;
 }
 
 form {
@@ -63,8 +64,10 @@ input[type="submit"] {
     margin-bottom: 20px;
     border-radius: 3px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 
 
@@ -80,7 +83,6 @@ input[type="submit"] {
     border: none;
     border-radius: 3px;
     cursor: pointer;
-    margin-top: 10px;
 }
 
 #copyButton:hover {
@@ -101,6 +103,26 @@ input[type="submit"] {
     margin-top: 20px;
 }
 
+.history-link {
+    width: 300px;
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+
+}
+
+.history-link:hover {
+    text-decoration: underline;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 @media only screen and (max-width: 600px) {
     .container {
         padding: 10px;
@@ -109,5 +131,15 @@ input[type="submit"] {
     input[type="text"],
     input[type="submit"] {
         width: 100%;
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #copyButton {
+        float: none;
+        margin-top: 10px;
     }
 }
